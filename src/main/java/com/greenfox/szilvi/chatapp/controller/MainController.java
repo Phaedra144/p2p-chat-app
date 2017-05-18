@@ -18,22 +18,23 @@ public class MainController {
 
     @RequestMapping(value = "/")
     public String home(HttpServletRequest request) {
-        try {
-            requestLogger.info(request);
-        } catch (Exception e) {
-            requestLogger.error(request);
-        }
+        receiveLogInfo(request);
+        requestLogger.error(request);
         return "index";
     }
 
     @RequestMapping(value = "/enter")
     public String register(HttpServletRequest request) {
+        receiveLogInfo(request);
+        return "register";
+    }
+
+    private void receiveLogInfo(HttpServletRequest request) {
         try {
             requestLogger.info(request);
         } catch (Exception e) {
             requestLogger.error(request);
         }
-        return "register";
     }
 }
 
