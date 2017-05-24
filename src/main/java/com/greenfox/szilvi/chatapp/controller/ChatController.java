@@ -4,16 +4,17 @@ package com.greenfox.szilvi.chatapp.controller;
  * Created by Szilvi on 2017. 05. 18..
  */
 
-import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.greenfox.szilvi.chatapp.model.RequestLogger;
-import com.greenfox.szilvi.chatapp.model.User;
+import com.greenfox.szilvi.chatapp.model.*;
+import com.greenfox.szilvi.chatapp.model.Error;
+import com.greenfox.szilvi.chatapp.repository.MessageRepo;
 import com.greenfox.szilvi.chatapp.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 public class ChatController {
@@ -24,13 +25,25 @@ public class ChatController {
     @Autowired
     ChatService chatService;
 
-    @PostMapping(value = "/register")
-    public void saveUser(HttpServletResponse response, HttpServletRequest request, String username)
-            throws IOException {
-        receiveLogInfo(request);
-        User user = new User();
-        chatService.saveUserWithNewName(username, user);
-        response.sendRedirect("/?username=" + user.getUsername());
+    @Autowired
+    MessageRepo messageRepo;
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public Error noNumberException() {
+        return new Error("Please provide a number!");
+    }
+
+    @RequestMapping
+    public String sendMessage(Model model){
+        model.addAttribute("messages", messageRepo.findAll());
+        return "index";
+    }
+
+    @CrossOrigin("*")
+    @PostMapping (value = "/api/message/receive")
+    public MessageResponse receiveMessage(@RequestBody(required = false)Message message, @RequestBody(required = false) Client client) throws IOException, HttpMessageNotReadableException{
+        chatService.saveMessage(message);
+        return new MessageResponse(message, client);
     }
 
     private void receiveLogInfo(HttpServletRequest request) {
@@ -40,4 +53,5 @@ public class ChatController {
             requestLogger.error(request);
         }
     }
+
 }

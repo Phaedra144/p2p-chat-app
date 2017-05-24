@@ -14,8 +14,35 @@ public class Message {
     int id;
     String username;
     String text;
-    Timestamp date;
+    Timestamp timestamp;
 
-    public Message(String title, String href) {
+    public Message() {
+    }
+
+    public Message(String username, String text, Timestamp timestamp) {
+        this.id = randomGenerateId();
+        this.username = username;
+        this.text = text;
+        this.timestamp = timestamp;
+    }
+
+    private int randomGenerateId() {
+        return (int) (Math.random()*9999999 + 1000000);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public Timestamp getDate() {
+        return timestamp;
     }
 }
