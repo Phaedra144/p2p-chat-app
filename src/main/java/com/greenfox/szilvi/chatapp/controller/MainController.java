@@ -36,6 +36,7 @@ public class MainController {
 
     @RequestMapping(value = "/")
     public String home(Model model) {
+
         if (chatService.getUsers().isEmpty()) {
             return "redirect:/enter";
         }

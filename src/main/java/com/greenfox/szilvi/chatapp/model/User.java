@@ -15,11 +15,11 @@ import org.springframework.stereotype.Component;
 @Table (name = "users")
 public class User {
 
-    String username;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     long id;
+
+    String username;
 
 
     public void setUsername(String username) {

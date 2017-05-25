@@ -45,6 +45,6 @@ public class ChatService {
     }
 
     public User getUser() {
-        return userRepo.findOne(0l);
+        return userRepo.findOne(1l);
     }
 }
