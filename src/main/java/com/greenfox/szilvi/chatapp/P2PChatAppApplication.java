@@ -10,18 +10,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import javax.servlet.http.HttpServletRequest;
 
 @SpringBootApplication
-public class P2PChatAppApplication implements CommandLineRunner {
-
-	@Autowired
-	RequestLogger requestLogger;
+public class P2PChatAppApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(P2PChatAppApplication.class, args);
-	}
-
-	@Override
-	public void run(String... args) throws Exception {
-		String loglevel = System.getenv("CHAT_APP_LOG_LEVEL");
-		requestLogger.getRoot().setLevel(Level.toLevel(loglevel));
 	}
 }

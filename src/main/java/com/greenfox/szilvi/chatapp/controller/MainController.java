@@ -1,18 +1,16 @@
 package com.greenfox.szilvi.chatapp.controller;
 
-import com.greenfox.szilvi.chatapp.model.RequestLogger;
-import com.greenfox.szilvi.chatapp.model.User;
-import com.greenfox.szilvi.chatapp.repository.MessageRepo;
+import com.greenfox.szilvi.chatapp.model.*;
 import com.greenfox.szilvi.chatapp.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * Created by Szilvi on 2017. 05. 18..
@@ -26,18 +24,23 @@ public class MainController {
     @Autowired
     ChatService chatService;
 
+    @ExceptionHandler
+    public void error(Exception ex) {
+        requestLogger.error(ex.getMessage());
+    }
+
     @ModelAttribute
     public void log(HttpServletRequest request) {
-        requestLogger.receiveLogInfo(request);
+        requestLogger.info(request);
     }
 
     @RequestMapping(value = "/")
     public String home(Model model) {
-        List<User> userList = chatService.getUsers();
-        if (userList.isEmpty()) {
+        if (chatService.getUsers().isEmpty()) {
             return "redirect:/enter";
         }
-        model.addAttribute("user", userList.get(0));
+        model.addAttribute("user", chatService.getUser());
+        model.addAttribute("messages", chatService.findAllMessages());
         return "index";
     }
 
@@ -54,6 +57,16 @@ public class MainController {
     @RequestMapping(value = "/enter")
     public String register() {
         return "enter";
+    }
+
+    @PostMapping(value = "/postMessage")
+    public String saveMessage(String username, String message){
+        if (!message.isEmpty()) {
+            Message msg = new Message(username, message);
+            chatService.saveMessage(msg);
+            IncomingMessage.post(new IncomingMessage(new Client(), msg));
+        }
+        return "redirect:/";
     }
 }
 

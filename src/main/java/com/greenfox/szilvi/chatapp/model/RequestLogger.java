@@ -11,29 +11,34 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UrlPathHelper;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
+
 @Component
 public class RequestLogger {
 
-    Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-
-    public void info(HttpServletRequest request) {
-        root.info(
-                new LogEntry(new UrlPathHelper().getPathWithinApplication(request), request.getMethod(), request.getParameterMap()).toString());
+    private static String getDate() {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
     }
 
-    public void error(HttpServletRequest request) {
-        root.error(new LogEntry(new UrlPathHelper().getPathWithinApplication(request), request.getMethod(), request.getParameterMap()).toString());
+    private static String getDetails(HttpServletRequest request) {
+        return request.getRequestURI() + " " + request.getMethod() + " " + request.getQueryString();
     }
 
-    public Logger getRoot() {
-        return root;
+    public static void info(HttpServletRequest request) {
+        String logLevel = System.getenv("CHAT_APP_LOGLEVEL");
+        if (logLevel != null) {
+            System.out.println(getDate() + " INFO Request " + getDetails(request));
+        }
     }
 
-    public void receiveLogInfo(HttpServletRequest request) {
-        try {
-            info(request);
-        } catch (Exception e) {
-            error(request);
+    public static void error(String message) {
+        String logLevel = System.getenv("CHAT_APP_LOGLEVEL");
+        if (logLevel != null) {
+            if (logLevel.contains("ERROR")) {
+                System.err.println(getDate() + " ERROR: " + message);
+            }
         }
     }
 }

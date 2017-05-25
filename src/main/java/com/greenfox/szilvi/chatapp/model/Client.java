@@ -13,4 +13,8 @@ public class Client {
     public Client() {
         this.id = System.getenv("CHAT_APP_UNIQUE_ID");
     }
+
+    public String getId() {
+        return id;
+    }
 }

@@ -39,4 +39,12 @@ public class ChatService {
     public void saveMessage(Message message){
         messageRepo.save(message);
     }
+
+    public List<Message> findAllMessages() {
+        return messageRepo.findAllByOrderByTimestampAsc();
+    }
+
+    public User getUser() {
+        return userRepo.findOne(0l);
+    }
 }

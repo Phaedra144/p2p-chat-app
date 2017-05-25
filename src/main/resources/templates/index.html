@@ -7,25 +7,27 @@
 <body>
 <div th:text="${error}"/>
 <h1> Peer to peer chat program</h1>
-<form action="/" method="post" th:object="${user}">
+<table>
+    <form action="/" method="post" th:object="${user}">
 
-    <tr>
-        <th><span>Current user:</span></th>
-        <th><span th:text="${user.username}">placeholder text</span></th>
+        <tr>
+            <th><span>Current user:</span></th>
+            <th><span th:text="${user.username}">placeholder text</span></th>
 
-    </tr>
-    <tr>
-        <td><span>Change user:</span></td>
-        <td><input type="text" name="username"/></td>
+        </tr>
+        <tr>
+            <td><span>Change user:</span></td>
+            <td><input type="text" name="username"/></td>
 
-        <td><input type="submit" value="change"/></td>
-    </tr>
-</form>
+            <td><input type="submit" value="change"/></td>
+        </tr>
+    </form>
+</table>
 <ul>
     <li th:each="m : ${messages}">
         <h4>
-            <span th:text="${m.username}"></span>
-            <span th:text="${m.text}" class="label label-default"></span>
+            <p th:text="${m.username}"></p>
+            <p th:text="${m.text}" class="label label-default"></p>
         </h4>
     </li>
 </ul>
@@ -38,7 +40,5 @@
     <input type="submit" value="Send" class="btn btn-primary"/>
     <a href="#" class="btn btn-default">Refresh</a>
 </form>
-
-
 </body>
 </html>

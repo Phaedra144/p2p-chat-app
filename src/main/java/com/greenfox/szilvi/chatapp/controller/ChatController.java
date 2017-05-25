@@ -3,18 +3,17 @@ package com.greenfox.szilvi.chatapp.controller;
 /**
  * Created by Szilvi on 2017. 05. 18..
  */
-
 import javax.servlet.http.HttpServletRequest;
+
+import com.fasterxml.jackson.core.JsonParseException;
 import com.greenfox.szilvi.chatapp.model.*;
-import com.greenfox.szilvi.chatapp.model.Error;
-import com.greenfox.szilvi.chatapp.repository.MessageRepo;
 import com.greenfox.szilvi.chatapp.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @RestController
 public class ChatController {
@@ -25,33 +24,67 @@ public class ChatController {
     @Autowired
     ChatService chatService;
 
-    @Autowired
-    MessageRepo messageRepo;
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public Error noNumberException() {
-        return new Error("Please provide a number!");
+    @ExceptionHandler
+    public void error(Exception ex) {
+        requestLogger.error(ex.getMessage());
     }
 
-    @RequestMapping
-    public String sendMessage(Model model){
-        model.addAttribute("messages", messageRepo.findAll());
-        return "index";
+    @ModelAttribute
+    public void log(HttpServletRequest request) {
+        requestLogger.info(request);
     }
 
     @CrossOrigin("*")
-    @PostMapping (value = "/api/message/receive")
-    public MessageResponse receiveMessage(@RequestBody(required = false)Message message, @RequestBody(required = false) Client client) throws IOException, HttpMessageNotReadableException{
-        chatService.saveMessage(message);
-        return new MessageResponse(message, client);
-    }
-
-    private void receiveLogInfo(HttpServletRequest request) {
-        try {
-            requestLogger.info(request);
-        } catch (Exception e) {
-            requestLogger.error(request);
+    @PostMapping("/api/message/receive")
+    public ResponseEntity<?> receiveMessage(@RequestBody IncomingMessage received) throws JsonParseException {
+        ArrayList<String> missing = new ArrayList<>();
+        if (received.getMessage() == null) {
+            missing.add("message");
+        } else {
+            if (received.getMessage().getId() == 0) {
+                missing.add("message.id");
+            }
+            if (received.getMessage().getUsername() == null) {
+                missing.add("message.username");
+            }
+            if (received.getMessage().getText() == null) {
+                missing.add("message.text");
+            }
+            if (received.getMessage().getTimestamp() == null) {
+                missing.add("message.timestamp");
+            }
+        }
+        if (received.getClient() == null) {
+            missing.add("client");
+        } else {
+            if (received.getClient().getId() == null) {
+                missing.add("client.id");
+            }
+        }
+        if (missing.isEmpty()) {
+            if (!received.getClient().getId().equals(System.getenv("CHAT_APP_UNIQUE_ID"))) {
+                chatService.saveMessage(received.getMessage());
+                IncomingMessage.post(received);
+            }
+            return new ResponseEntity<>(new StatusResponse("ok"), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new StatusResponse(missing), HttpStatus.BAD_REQUEST);
         }
     }
 
+    @PostMapping(value = "/api/messages")
+    public StatusResponse saveNewAndroidMessage(@RequestBody IncomingMessage received){
+        if (received.getMessage() != null || received.getClient() != null){
+            chatService.saveMessage(received.getMessage());
+            return new StatusResponse("ok");
+        }
+        return new StatusResponse(new ArrayList<>(Arrays.asList("missing client", " and/or missing message")));
+
+    }
+
+    @GetMapping(value = "/api/messages")
+    public MessageResponse receiveAndroidMessages(){
+       return new MessageResponse(chatService.findAllMessages(), new Client());
+    }
 }
+
