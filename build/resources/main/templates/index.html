@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Chat App</title>
+</head>
+<body>
+<div th:text="${error}"/>
+<h1> Peer to peer chat program</h1>
+<table>
+    <form action="/" method="post" th:object="${user}">
+
+        <tr>
+            <th><span>Current user:</span></th>
+            <th><span th:text="${user.username}">placeholder text</span></th>
+
+        </tr>
+        <tr>
+            <td><span>Change user:</span></td>
+            <td><input type="text" name="username"/></td>
+
+            <td><input type="submit" value="change"/></td>
+        </tr>
+    </form>
+</table>
+<ul>
+    <li th:each="m : ${messages}">
+        <h4>
+            <p th:text="${m.username}"></p>
+            <p th:text="${m.text}" class="label label-default"></p>
+        </h4>
+    </li>
+</ul>
+<form th:action="@{/postMessage}" method="POST">
+    <input type="hidden" name="username" th:value="${user.username}"/>
+    <div class="form-group">
+        <label for="message">Message</label>
+        <input type="text" name="message" id="message" th:value="${message}" class="form-control"/>
+    </div>
+    <input type="submit" value="Send" class="btn btn-primary"/>
+    <a href="#" class="btn btn-default">Refresh</a>
+</form>
+</body>
+</html>

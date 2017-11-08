@@ -29,7 +29,6 @@ public class IncomingMessage {
             status = template.postForObject(url, incomingMessage, StatusResponse.class);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            System.out.println(e.getStackTrace());
         }
         return status;
     }

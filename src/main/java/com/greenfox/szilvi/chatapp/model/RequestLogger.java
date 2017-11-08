@@ -29,7 +29,7 @@ public class RequestLogger {
     public static void info(HttpServletRequest request) {
         String logLevel = System.getenv("CHAT_APP_LOGLEVEL");
         if (logLevel != null) {
-            System.out.println(getDate() + " INFO Request " + getDetails(request));
+            System.out.println(getDate() + " INFO: " + getDetails(request));
         }
     }
 
