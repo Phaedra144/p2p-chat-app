@@ -26,17 +26,17 @@ public class RequestLogger {
         return request.getRequestURI() + " " + request.getMethod() + " " + request.getQueryString();
     }
 
-    public static void info(HttpServletRequest request) {
+    public void info(HttpServletRequest request) {
         String logLevel = System.getenv("CHAT_APP_LOGLEVEL");
-        if (logLevel != null) {
-            System.out.println(getDate() + " INFO: " + getDetails(request));
+        if (logLevel != null && logLevel.contains("INFO")) {
+            System.out.println(getDate() + " INFO: Request " + getDetails(request));
         }
     }
 
-    public static void error(String message) {
+    public void error(String message) {
         String logLevel = System.getenv("CHAT_APP_LOGLEVEL");
         if (logLevel != null) {
-            if (logLevel.contains("ERROR")) {
+            if (logLevel.contains("ERROR") || logLevel.contains("INFO")) {
                 System.err.println(getDate() + " ERROR: " + message);
             }
         }

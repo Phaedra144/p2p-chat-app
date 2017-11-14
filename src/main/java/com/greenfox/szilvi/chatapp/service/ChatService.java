@@ -31,9 +31,8 @@ public class ChatService {
         return user;
     }
 
-    public User saveUser(User user) {
+    public void saveUser(User user) {
         userRepo.save(user);
-        return user;
     }
 
     public void saveMessage(Message message){

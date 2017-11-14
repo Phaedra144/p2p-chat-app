@@ -8,7 +8,7 @@
 <div th:text="${error}"/>
 <h1> Peer to peer chat program</h1>
 <table>
-    <form action="/" method="post" th:object="${user}">
+    <form action="/" method="post">
 
         <tr>
             <th><span>Current user:</span></th>
@@ -19,7 +19,7 @@
             <td><span>Change user:</span></td>
             <td><input type="text" name="username"/></td>
 
-            <td><input type="submit" value="change"/></td>
+            <td><input type="submit" value="Change"/></td>
         </tr>
     </form>
 </table>
@@ -31,7 +31,7 @@
         </h4>
     </li>
 </ul>
-<form th:action="@{/postMessage}" method="POST">
+<form th:action="@{/postMessage}" method="post">
     <input type="hidden" name="username" th:value="${user.username}"/>
     <div class="form-group">
         <label for="message">Message</label>

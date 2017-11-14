@@ -5,10 +5,7 @@ import com.greenfox.szilvi.chatapp.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,9 +31,8 @@ public class MainController {
         requestLogger.info(request);
     }
 
-    @RequestMapping(value = "/")
+    @GetMapping(value = "/")
     public String home(Model model) {
-
         if (chatService.getUsers().isEmpty()) {
             return "redirect:/enter";
         }
@@ -50,12 +46,13 @@ public class MainController {
         if (user.getUsername().isEmpty()) {
             model.addAttribute("error", "The username field is empty");
         } else {
+            user.setId(1l);
             chatService.saveUser(user);
         }
-        return "index";
+        return "redirect:/";
     }
 
-    @RequestMapping(value = "/enter")
+    @GetMapping(value = "/enter")
     public String register() {
         return "enter";
     }
