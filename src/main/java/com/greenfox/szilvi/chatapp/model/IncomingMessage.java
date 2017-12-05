@@ -21,18 +21,6 @@ public class IncomingMessage {
         this.message = message;
     }
 
-    public static StatusResponse post(IncomingMessage incomingMessage) {
-        RestTemplate template = new RestTemplate();
-        String url = System.getenv("CHAT_APP_PEER_ADDRESS") + "api/message/receive";
-        StatusResponse status = new StatusResponse();
-        try {
-            status = template.postForObject(url, incomingMessage, StatusResponse.class);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return status;
-    }
-
     public Message getMessage() {
         return message;
     }

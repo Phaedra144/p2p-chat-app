@@ -47,4 +47,8 @@ public class Message {
     public Timestamp getTimestamp() {
         return timestamp;
     }
+
+    public void setId() {
+        this.id = randomGenerateId();
+    }
 }

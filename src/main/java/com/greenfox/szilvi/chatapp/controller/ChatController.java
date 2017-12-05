@@ -64,7 +64,7 @@ public class ChatController {
         if (missing.isEmpty()) {
             if (!received.getClient().getId().equals(System.getenv("CHAT_APP_UNIQUE_ID"))) {
                 chatService.saveMessage(received.getMessage());
-                IncomingMessage.post(received);
+                ChatService.post(received);
             }
             return new ResponseEntity<>(new StatusResponse("ok"), HttpStatus.OK);
         } else {
@@ -74,7 +74,9 @@ public class ChatController {
 
     @PostMapping(value = "/api/messages")
     public StatusResponse saveNewAndroidMessage(@RequestBody IncomingMessage received){
-        if (received.getMessage() != null || received.getClient() != null){
+        Message message = received.getMessage();
+        if (message != null || received.getClient() != null){
+            message.setId();
             chatService.saveMessage(received.getMessage());
             return new StatusResponse("ok");
         }
