@@ -62,7 +62,7 @@ public class MainController {
         if (!message.isEmpty()) {
             Message msg = new Message(username, message);
             chatService.saveMessage(msg);
-            IncomingMessage.post(new IncomingMessage(new Client(), msg));
+            ChatService.post(new IncomingMessage(new Client(), msg));
         }
         return "redirect:/";
     }
